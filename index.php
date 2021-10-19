@@ -1,24 +1,14 @@
 <?php
-header('Access-Control-Allow-Origin:' . $_SERVER['HTTP_ORIGIN']);
-header('Access-Control-Allow-Credentials:true');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-header('Access-Control-Max-Age: 3600');
-header('Content-Type: application/json');
+require_once 'inc/functions.php';
+require_once 'inc/headers.php';
 
-if ($_SERVER['REQUEST_METHOD']=== 'OPTIONS') {
-    return 0;
-}
 try {
-$db = new PDO('mysql:host=localhost;dbname=todo;charset=utf8','root','');
-$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+$db = openDb();
 $sql = "select * from task";
 $query = $db->query($sql);
 $results = $query->fetchAll(PDO::FETCH_ASSOC);
 header('HTTP/1.1 200 OK');
 print json_encode($results);
 } catch (PDOException $pdoex) {
-header('HTTP/1.1 500 Internal Server Error');
-$error = array('error' => $pdoex->getMessage());
-print json_encode($error);
+returnError($pdoex);
 }
